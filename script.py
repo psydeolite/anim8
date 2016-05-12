@@ -111,28 +111,34 @@ def first_pass( commands ):
   ===================="""
 def second_pass( commands, num_frames ):
     knobs=[]
-    for frame in range(num_frames):
-        for command in commands:
+    for i in range(num_frames):
+        knobs.append({})
+        
+    #for frame in range(num_frames):
+    for command in commands:
             #print command
-            if command[0]=='vary':
-                c_frame={}
-                #key: knob name; value: knob value
+        if command[0]=='vary':
+            #c_frame={}
+            for i in range(num_frames):
+            #key: knob name; value: knob value
                 frame_start=command[2]
                 frame_end=command[3]
                 val_start=command[4]
                 val_end=command[5]
-                
                 knob_name=command[1]
                 knob_val=1 #temp
-                if frame<frame_start: #animation hasn't started yet
-                    c_frame[knob_name]=val_start
-                elif frame>frame_end: #animation already ended
-                    c_frame[knob_name]=val_end
+                if i<frame_start: #animation hasn't started yet
+                    #c_frame[knob_name]=val_start
+                    knobs[i][knob_name]=val_start
+                elif i>frame_end: #animation already ended
+                    knobs[i][knob_name]=val_end
                 else:
-                    knob_val = val_start + ( (val_end - val_start)*(frame - frame_start) / float((frame_end - frame_start)))
-                    c_frame[knob_name]=knob_val
+                    knob_val = val_start + ( (val_end - val_start)*(i - frame_start) / float((frame_end - frame_start)))
+                    knobs[i][knob_name]=knob_val
+                #c_frame[knob_name]=knob_val
                 #print c_frame
-                knobs.append(c_frame)
+                #knobs.append(c_frame)
+    print knobs
     return knobs
 
 def run(filename):
@@ -151,6 +157,8 @@ def run(filename):
         print "Parsing failed."
         return
 
+   
+    screen=new_screen()
     pass1=first_pass(commands)
     num_frames=pass1[0]
     basename=pass1[1]
@@ -158,18 +166,22 @@ def run(filename):
     
     if num_frames==None:
         print 'Not animated'
+        num_frames=1
     else:
         print 'Animated'
         knobs=second_pass(commands, num_frames)
         anim=True
-    if anim:
-        mkdir(basename, 0755)
+        print knobs
+    mkdir(basename, 0755)
+        
     #time to iterate through the framezzz
     for i in range(num_frames):
+        #print 'start'
         stack = [ tmp ]
-        screen = new_screen()    
+        #screen = new_screen()    
         
         for command in commands:
+            #print commands
             if command[0] == "pop":
                 stack.pop()
                 if not stack:
@@ -228,39 +240,66 @@ def run(filename):
 
                      
             if command[0] == "move":
-                val=1
+                '''val=1
                 knob_name=command[-1]
                 if knob_name!=None:
-                    val=knobs[i][knob_name]
-                xval = command[1] * val
-                yval = command[2] * val
-                zval = command[3] * val
-                
+                    val=knobs[i][knob_name]'''
+                xval = command[1] 
+                yval = command[2] 
+                zval = command[3] 
+
+                try:
+                    if len(command) == 5:
+                        xval*=knobs[i][command[4]]
+                        yval*=knobs[i][command[4]]
+                        zval*=knobs[i][command[4]]
+                except:
+                    pass
                 t = make_translate(xval, yval, zval)
                 matrix_mult( stack[-1], t )
                 stack[-1] = t
 
             if command[0] == "scale":
-                val=1
+                ''' val=1
                 knob_name=command[-1]
                 if knob_name!=None:
-                    print 'hi'
-                    print knobs[i]
+                    #print 'hi'
+                    #print knobs[i]
+                    #print knob_name
                     val=knobs[i][knob_name]
                 xval = command[1] * val
                 yval = command[2] * val
-                zval = command[3] * val
+                zval = command[3] * val'''
+
+                xval = command[1] 
+                yval = command[2] 
+                zval = command[3] 
+
+                try:
+                    if len(command) == 5:
+                        xval*=knobs[i][command[4]]
+                        yval*=knobs[i][command[4]]
+                        zval*=knobs[i][command[4]]
+                except:
+                    pass
 
                 t = make_scale(xval, yval, zval)
                 matrix_mult( stack[-1], t )
                 stack[-1] = t
                 
             if command[0] == "rotate":
-                val=1
+                #print 'rot'
+                '''val=1
                 knob_name=command[-1]
                 if knob_name!=None:
                     val=knobs[i][knob_name]
-                angle = command[2] * (math.pi / 180) * val
+                angle = command[2] * (math.pi / 180) * val'''
+                angle=command[2] * (math.pi / 180)
+                try:
+                    if len(command)==4:
+                        angle*=knobs[i][commands[3]]
+                except:
+                    pass
 
                 if command[1] == 'x':
                     t = make_rotX( angle )
@@ -269,7 +308,18 @@ def run(filename):
                 elif command[1] == 'z':
                     t = make_rotZ( angle )            
                     
-                    matrix_mult( stack[-1], t )
-                    stack[-1] = t
-            if anim:
-                save_extension(screen, '%s/'%basename + basename+'%04d.png' % i)
+                matrix_mult( stack[-1], t )
+                stack[-1] = t
+          
+            '''if anim:
+                save_extension(screen, basename+'/' + basename+'%04d.png' % i)
+            clear_screen(screen)
+            print i'''
+            if i==0:
+                save_ppm(screen,basename+"/"+basename+'00'+str(i)+".ppm")
+            else:
+                z = 2-int(math.log10(i))              
+                save_ppm(screen,basename+"/"+basename+'0'*z+str(i)+".ppm")        
+                clear_screen(screen)     
+            print i
+
