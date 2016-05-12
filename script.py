@@ -172,13 +172,14 @@ def run(filename):
         knobs=second_pass(commands, num_frames)
         anim=True
         print knobs
+        
     mkdir(basename, 0755)
         
     #time to iterate through the framezzz
     for i in range(num_frames):
         #print 'start'
         stack = [ tmp ]
-        #screen = new_screen()    
+        screen = new_screen()    
         
         for command in commands:
             #print commands
@@ -199,9 +200,11 @@ def run(filename):
             if command[0] == "sphere":
                 m = []
                 add_sphere(m, command[1], command[2], command[3], command[4], 5)
+                print m
                 matrix_mult(stack[-1], m)
                 draw_polygons( m, screen, color )
-
+                #print screen
+                #display(screen)
             if command[0] == "torus":
                 m = []
                 add_torus(m, command[1], command[2], command[3], command[4], command[5], 5)
@@ -240,47 +243,38 @@ def run(filename):
 
                      
             if command[0] == "move":
-                '''val=1
-                knob_name=command[-1]
-                if knob_name!=None:
-                    val=knobs[i][knob_name]'''
                 xval = command[1] 
                 yval = command[2] 
                 zval = command[3] 
 
                 try:
                     if len(command) == 5:
-                        xval*=knobs[i][command[4]]
-                        yval*=knobs[i][command[4]]
-                        zval*=knobs[i][command[4]]
+                        if command[-1]:
+                            print 'factor'
+                            xval*=knobs[i][command[-1]]
+                            yval*=knobs[i][command[-1]]
+                            zval*=knobs[i][command[-1]]
                 except:
+                    print 'not move'
                     pass
                 t = make_translate(xval, yval, zval)
                 matrix_mult( stack[-1], t )
                 stack[-1] = t
 
             if command[0] == "scale":
-                ''' val=1
-                knob_name=command[-1]
-                if knob_name!=None:
-                    #print 'hi'
-                    #print knobs[i]
-                    #print knob_name
-                    val=knobs[i][knob_name]
-                xval = command[1] * val
-                yval = command[2] * val
-                zval = command[3] * val'''
-
                 xval = command[1] 
                 yval = command[2] 
                 zval = command[3] 
 
                 try:
                     if len(command) == 5:
-                        xval*=knobs[i][command[4]]
-                        yval*=knobs[i][command[4]]
-                        zval*=knobs[i][command[4]]
+                        if command[-1]:
+                            print 'factor'
+                            xval*=knobs[i][command[-1]]
+                            yval*=knobs[i][command[-1]]
+                            zval*=knobs[i][command[-1]]
                 except:
+                    print 'not scale'
                     pass
 
                 t = make_scale(xval, yval, zval)
@@ -288,17 +282,16 @@ def run(filename):
                 stack[-1] = t
                 
             if command[0] == "rotate":
-                #print 'rot'
-                '''val=1
-                knob_name=command[-1]
-                if knob_name!=None:
-                    val=knobs[i][knob_name]
-                angle = command[2] * (math.pi / 180) * val'''
                 angle=command[2] * (math.pi / 180)
                 try:
                     if len(command)==4:
-                        angle*=knobs[i][commands[3]]
+                        if command[-1]:
+                            print 'factor'
+                            angle*=knobs[i][command[-1]]
+                except KeyError as e:
+                    print 'KeyError'
                 except:
+                    print 'no rotate'
                     pass
 
                 if command[1] == 'x':
@@ -311,15 +304,16 @@ def run(filename):
                 matrix_mult( stack[-1], t )
                 stack[-1] = t
           
-            '''if anim:
+            if anim:
                 save_extension(screen, basename+'/' + basename+'%04d.png' % i)
-            clear_screen(screen)
-            print i'''
-            if i==0:
+            #print screen
+            #clear_screen(screen)
+            print i
+            '''if i==0:
                 save_ppm(screen,basename+"/"+basename+'00'+str(i)+".ppm")
             else:
                 z = 2-int(math.log10(i))              
                 save_ppm(screen,basename+"/"+basename+'0'*z+str(i)+".ppm")        
                 clear_screen(screen)     
-            print i
+            print i'''
 
