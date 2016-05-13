@@ -1,0 +1,20 @@
+frames 20
+basename mine
+push
+move 250 250 0
+//scale 5 5 5 enlargen
+rotate x 362 spinny
+//sphere 0 0 0 100
+torus 0 0 0 50 210
+//vary spinny 0 45 0 1
+rotate x 360 spinly
+torus 0 0 0 20 100
+vary spinly 0 45 0 1
+rotate x 90
+rotate z 362 spinner
+torus 0 0 0 50 210
+rotate y 360 spinsy
+torus 0 0 0 20 100
+vary spinner 0 45 0 1
+vary spinny 0 45 0 1
+vary spinsy 0 45 0 1

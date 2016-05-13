@@ -138,7 +138,7 @@ def second_pass( commands, num_frames ):
                 #c_frame[knob_name]=knob_val
                 #print c_frame
                 #knobs.append(c_frame)
-    print knobs
+    #print knobs
     return knobs
 
 def run(filename):
@@ -171,7 +171,7 @@ def run(filename):
         print 'Animated'
         knobs=second_pass(commands, num_frames)
         anim=True
-        print knobs
+        #print knobs
         
     mkdir(basename, 0755)
         
@@ -200,7 +200,7 @@ def run(filename):
             if command[0] == "sphere":
                 m = []
                 add_sphere(m, command[1], command[2], command[3], command[4], 5)
-                print m
+                #print m
                 matrix_mult(stack[-1], m)
                 draw_polygons( m, screen, color )
                 #print screen
@@ -250,7 +250,7 @@ def run(filename):
                 try:
                     if len(command) == 5:
                         if command[-1]:
-                            print 'factor'
+                            #print 'factor'
                             xval*=knobs[i][command[-1]]
                             yval*=knobs[i][command[-1]]
                             zval*=knobs[i][command[-1]]
@@ -269,7 +269,7 @@ def run(filename):
                 try:
                     if len(command) == 5:
                         if command[-1]:
-                            print 'factor'
+                            #print 'factor'
                             xval*=knobs[i][command[-1]]
                             yval*=knobs[i][command[-1]]
                             zval*=knobs[i][command[-1]]
@@ -286,7 +286,7 @@ def run(filename):
                 try:
                     if len(command)==4:
                         if command[-1]:
-                            print 'factor'
+                            #print 'factor'
                             angle*=knobs[i][command[-1]]
                 except KeyError as e:
                     print 'KeyError'
@@ -308,7 +308,7 @@ def run(filename):
                 save_extension(screen, basename+'/' + basename+'%04d.png' % i)
             #print screen
             #clear_screen(screen)
-            print i
+            #print i
             '''if i==0:
                 save_ppm(screen,basename+"/"+basename+'00'+str(i)+".ppm")
             else:
